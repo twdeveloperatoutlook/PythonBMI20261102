@@ -65,6 +65,36 @@
                   <span class="result-number">{{ result.bmi }}</span>
                   <span class="result-unit">BMI</span>
                 </div>
+                <div class="bmi-gauge">
+                  <svg viewBox="0 0 360 210" role="img" aria-labelledby="gauge-title gauge-description">
+                    <title id="gauge-title">BMI 體位儀表圖</title>
+                    <desc id="gauge-description">目前 BMI {{ result.bmi }}，{{ result.label }}。過輕：低於 18.5；正常：18.5 至未滿 24；過重：24 至未滿 27；肥胖：27 以上。刻度範圍為 0 至 40，超過 40 的指針停在最右端。</desc>
+                    <g class="gauge-bands" fill="none" stroke-width="22">
+                      <path class="gauge-low" d="M 40 180 A 140 140 0 0 1 320 180" pathLength="40" stroke-dasharray="18.5 40"/>
+                      <path class="gauge-healthy" d="M 40 180 A 140 140 0 0 1 320 180" pathLength="40" stroke-dasharray="5.5 40" stroke-dashoffset="-18.5"/>
+                      <path class="gauge-high" d="M 40 180 A 140 140 0 0 1 320 180" pathLength="40" stroke-dasharray="3 40" stroke-dashoffset="-24"/>
+                      <path class="gauge-obese" d="M 40 180 A 140 140 0 0 1 320 180" pathLength="40" stroke-dasharray="13 40" stroke-dashoffset="-27"/>
+                    </g>
+                    <g class="gauge-ticks" text-anchor="middle">
+                      <text x="17" y="185">0</text>
+                      <text x="161" y="18">18.5</text>
+                      <text x="232" y="28">24</text>
+                      <text x="270" y="48">27</text>
+                      <text x="342" y="185">40+</text>
+                    </g>
+                    <g class="gauge-needle" transform="rotate({{ result.gauge_angle }} 180 180)">
+                      <path d="M 180 62 L 174 180 L 186 180 Z"/>
+                    </g>
+                    <circle class="gauge-hub" cx="180" cy="180" r="10"/>
+                  </svg>
+                  <div class="gauge-legend">
+                    <span><i class="range-dot low-dot" aria-hidden="true"></i>過輕</span>
+                    <span><i class="range-dot healthy-dot" aria-hidden="true"></i>正常</span>
+                    <span><i class="range-dot high-dot" aria-hidden="true"></i>過重</span>
+                    <span><i class="range-dot obese-dot" aria-hidden="true"></i>肥胖</span>
+                  </div>
+                  {% if result.gauge_overflow %}<p class="gauge-note">BMI 超過圖表上限 40，指針停在最右端；實際數值如上。</p>{% endif %}
+                </div>
                 <div class="result-divider"></div>
                 <span class="result-label">你的體位屬於 <strong>{{ result.label }}</strong></span>
                 <h2 id="result-title">給你的健康建議</h2>
