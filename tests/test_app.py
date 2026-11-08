@@ -27,6 +27,36 @@ class BmiAppTests(unittest.TestCase):
         for band in ["low", "healthy", "high", "obese"]:
             self.assertIn(f'class="gauge-{band}"', page)
 
+    def test_name_in_advice_and_form(self):
+        page = self.client.post(
+            "/", data={"name": "  小明  ", "height": "170", "weight": "65"}
+        ).get_data(as_text=True)
+        self.assertIn('value="小明"', page)
+        self.assertIn("給 小明 的健康建議", page)
+
+    def test_optional_name(self):
+        for name in ["", "   "]:
+            with self.subTest(name=name):
+                page = self.client.post(
+                    "/", data={"name": name, "height": "170", "weight": "65"}
+                ).get_data(as_text=True)
+                self.assertIn("給你的健康建議", page)
+
+    def test_name_preserved_when_measurements_are_invalid(self):
+        page = self.client.post(
+            "/", data={"name": "小明", "height": "", "weight": "65"}
+        ).get_data(as_text=True)
+        self.assertIn('value="小明"', page)
+        self.assertIn('aria-invalid="true"', page)
+        self.assertNotIn("YOUR RESULT", page)
+
+    def test_name_is_escaped(self):
+        page = self.client.post(
+            "/", data={"name": '<script>alert(1)</script>', "height": "170", "weight": "65"}
+        ).get_data(as_text=True)
+        self.assertNotIn("<script>", page)
+        self.assertIn("給 &lt;script&gt;alert(1)&lt;/script&gt; 的健康建議", page)
+
     def test_gauge_positions_and_categories(self):
         for bmi, angle, category in [
             ("0.1", -89.55, "體重過輕"),

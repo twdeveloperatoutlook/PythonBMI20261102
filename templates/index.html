@@ -35,6 +35,12 @@
 
               <form method="post" action="{{ url_for('index') }}" novalidate>
                 <div class="form-fields">
+                  <div class="field field-name">
+                    <label for="name">姓名（選填） <span>NAME</span></label>
+                    <div class="input-wrap">
+                      <input id="name" name="name" type="text" autocomplete="name" placeholder="請輸入姓名" value="{{ name_input }}">
+                    </div>
+                  </div>
                   <div class="field">
                     <label for="height">身高 <span>HEIGHT</span></label>
                     <div class="input-wrap">
@@ -97,7 +103,7 @@
                 </div>
                 <div class="result-divider"></div>
                 <span class="result-label">你的體位屬於 <strong>{{ result.label }}</strong></span>
-                <h2 id="result-title">給你的健康建議</h2>
+                <h2 id="result-title">{% if name_input %}給 {{ name_input }} 的健康建議{% else %}給你的健康建議{% endif %}</h2>
                 <p>{{ result.advice }}</p>
                 <span class="result-decoration" aria-hidden="true">✳</span>
               </section>
