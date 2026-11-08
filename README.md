@@ -36,3 +36,9 @@ BMI = 體重（公斤）÷ 身高（公尺）²。分類採臺灣成人體位參
 - Repository secret `AZURE_CREDENTIALS`：Azure 服務主體的 `clientId`、`clientSecret`、`subscriptionId`、`tenantId` 組成的 JSON。此 Secret 已設定，不要把內容寫進程式碼。
 
 請確認該服務主體對 `NTUSTweb00` 具有部署權限（例如該站點的 **Website Contributor**）。推送符合上述條件的 `main` 分支異動，或從 GitHub Actions 手動執行工作流程即可部署。
+
+## PR 測試環境
+
+`.github/workflows/deploy-azure-test.yml` 在以 `main` 為目標的 PR 開啟、更新、重新開啟或轉為準備審查時，測試並部署 PR 的合併結果至 Azure Web App 的 `test` slot，不會部署到正式環境。所有 PR 共用同一個 slot，因此後續部署會覆蓋先前的測試版本。
+
+請先建立 `test` slot，並在 GitHub Actions 設定 repository variables `AZURE_WEBAPP_NAME`、`AZURE_RESOURCE_GROUP` 和上述 `AZURE_CREDENTIALS` secret；服務主體也需要對 slot 具有部署權限。為保護部署憑證，此流程只部署來自同一儲存庫分支的 PR，來自 fork 的 PR 會略過部署。
