@@ -79,6 +79,29 @@ class BmiAppTests(unittest.TestCase):
                 self.assertNotIn("YOUR RESULT", page)
                 self.assertNotIn('class="bmi-gauge"', page)
 
+    def test_name_is_included_in_advice(self):
+        response = self.client.post(
+            "/", data={"name": "小美", "height": "170", "weight": "65"}
+        )
+        page = response.get_data(as_text=True)
+        self.assertIn("給 小美 的健康建議", page)
+        self.assertIn("小美，你的體位屬於", page)
+        self.assertIn("小美，維持均衡飲食", page)
+        self.assertIn('value="小美"', page)
+
+    def test_name_is_optional(self):
+        response = self.client.post("/", data={"height": "170", "weight": "65"})
+        page = response.get_data(as_text=True)
+        self.assertIn("給你的健康建議", page)
+        self.assertIn("你的體位屬於", page)
+
+    def test_name_is_escaped(self):
+        response = self.client.post(
+            "/", data={"name": "<script>alert(1)</script>", "height": "170", "weight": "65"}
+        )
+        page = response.get_data(as_text=True)
+        self.assertNotIn("<script>", page)
+
     def test_input_is_escaped(self):
         response = self.client.post("/", data={"height": '<script>alert(1)</script>', "weight": "65"})
         page = response.get_data(as_text=True)

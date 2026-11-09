@@ -36,6 +36,12 @@
               <form method="post" action="{{ url_for('index') }}" novalidate>
                 <div class="form-fields">
                   <div class="field">
+                    <label for="name">姓名 <span>NAME</span></label>
+                    <div class="input-wrap">
+                      <input id="name" name="name" type="text" autocomplete="name" maxlength="50" placeholder="例如 小美（選填）" value="{{ name_input }}">
+                    </div>
+                  </div>
+                  <div class="field">
                     <label for="height">身高 <span>HEIGHT</span></label>
                     <div class="input-wrap">
                       <input id="height" name="height" type="number" inputmode="decimal" min="0.01" step="any" placeholder="例如 170" value="{{ height_input }}" required {% if errors.height %}aria-invalid="true" aria-describedby="height-error"{% endif %}>
@@ -96,9 +102,9 @@
                   {% if result.gauge_overflow %}<p class="gauge-note">BMI 超過圖表上限 40，指針停在最右端；實際數值如上。</p>{% endif %}
                 </div>
                 <div class="result-divider"></div>
-                <span class="result-label">你的體位屬於 <strong>{{ result.label }}</strong></span>
-                <h2 id="result-title">給你的健康建議</h2>
-                <p>{{ result.advice }}</p>
+                <span class="result-label">{% if result.name %}{{ result.name }}，你的體位屬於{% else %}你的體位屬於{% endif %} <strong>{{ result.label }}</strong></span>
+                <h2 id="result-title">{% if result.name %}給 {{ result.name }} 的健康建議{% else %}給你的健康建議{% endif %}</h2>
+                <p>{% if result.name %}{{ result.name }}，{% endif %}{{ result.advice }}</p>
                 <span class="result-decoration" aria-hidden="true">✳</span>
               </section>
             {% else %}
